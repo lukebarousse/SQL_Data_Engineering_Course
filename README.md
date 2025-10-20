@@ -1,12 +1,12 @@
 # 🛠️ SQL for Data Engineering - Full Course
 
 Data Nerds! This repo contains all the files needed to follow along my free course: [SQL for Data Engineering]()
-[![SQL for Data Engineering](/Resources/images/SQL_Data_Engineering_Thumbnail.png)]()
+[![SQL for Data Engineering](Resources/images/SQL_Data_Engineering_Thumbnail.png)]()
 
 ## Team Members 👥
 **🙋🏼‍♂️ Course Leader:** [Luke Barousse](https://www.linkedin.com/in/luke-b)  
 **🎬 Course Producer:** [Kelly Adams](https://www.linkedin.com/in/kellyjianadams)  
-**💻 Content Developer:** [Rikki Singh](https://www.linkedin.com/in/rikkisingh)
+**💻 Content Developer:** [Rikki Singh](https://www.linkedin.com/in/rikkisingh)  
 **📺 Video Editor:** [Brannon Linder](https://www.linkedin.com/in/brannonlinder)  
 
 
