@@ -6,7 +6,7 @@ Question: What are the most optimal skills to learn for data engineers (high dem
     and high compensation (financial benefits), providing strategic guidance for data engineering career development
 */
 
--- Identifies skills in high demand for Data Analyst roles
+-- Identifies skills in high demand for Data Engineer roles
 -- Use Query #3
 WITH skills_demand AS (
     SELECT
@@ -17,14 +17,14 @@ WITH skills_demand AS (
     INNER JOIN skills_job_dim sjd ON jpf.job_id = sjd.job_id
     INNER JOIN skills_dim sd ON sjd.skill_id = sd.skill_id
     WHERE
-        jpf.job_title_short = 'Data Analyst' 
+        jpf.job_title_short = 'Data Engineer' 
         AND jpf.salary_year_avg IS NOT NULL
         AND jpf.job_work_from_home = TRUE 
     GROUP BY
         sd.skill_id,
         sd.skills
 ), 
--- Skills with high average salaries for Data Analyst roles
+-- Skills with high average salaries for Data Engineer roles
 -- Use Query #4
 average_salary AS (
     SELECT 
