@@ -19,7 +19,7 @@ WITH top_paying_jobs AS (
     LEFT JOIN company_dim ON job_postings_fact.company_id = company_dim.company_id
     WHERE
         job_title_short = 'Data Engineer' AND 
-        job_location = 'Anywhere' AND 
+        job_work_from_home = True AND 
         salary_year_avg IS NOT NULL
     ORDER BY
         salary_year_avg DESC
@@ -45,56 +45,56 @@ Engtal ($325K): Requires big data technologies like Kafka, Hadoop, Spark and Pyt
 │ job_id  │                         job_title                          │ salary_year_avg │  company_name  │   skills   │
 │  int64  │                          varchar                           │     double      │    varchar     │  varchar   │
 ├─────────┼────────────────────────────────────────────────────────────┼─────────────────┼────────────────┼────────────┤
-│ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ spark      │
-│ 1610938 │ Data Engineer - Content Production & Promotion [Remote]    │        445000.0 │ Netflix        │ python     │
-│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ scala      │
-│ 1610938 │ Data Engineer - Content Production & Promotion [Remote]    │        445000.0 │ Netflix        │ java       │
-│ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ java       │
-│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ sql        │
 │ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ spark      │
-│ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ python     │
-│ 1610938 │ Data Engineer - Content Production & Promotion [Remote]    │        445000.0 │ Netflix        │ spark      │
-│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ java       │
-│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ spring     │
+│ 1610938 │ Data Engineer - Content Production & Promotion [Remote]    │        445000.0 │ Netflix        │ python     │
 │ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ scala      │
+│ 1610938 │ Data Engineer - Content Production & Promotion [Remote]    │        445000.0 │ Netflix        │ java       │
+│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ java       │
 │ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ sql        │
+│ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ java       │
+│ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ spark      │
+│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ scala      │
+│ 1610938 │ Data Engineer - Content Production & Promotion [Remote]    │        445000.0 │ Netflix        │ spark      │
+│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ spring     │
+│ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ python     │
+│ 1241978 │ Data Engineer (L5) - Growth Insights and Foundations       │        445000.0 │ Netflix        │ sql        │
 │ 1578513 │ Data Engineer - Commerce Product Data Engineering [Remote] │        445000.0 │ Netflix        │ gdpr       │
 │ 1273376 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ terraform  │
 │ 1273376 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ kubernetes │
 │ 1273376 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ docker     │
 │ 1273376 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ git        │
 │ 1273376 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ aws        │
+│ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ terraform  │
 │ 1273376 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ python     │
-│ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ docker     │
-│ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ git        │
+│ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ python     │
 │ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ rust       │
 │ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ aws        │
-│ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ terraform  │
+│ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ git        │
 │ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ python     │
+│ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ docker     │
 │ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ kubernetes │
 │ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ kubernetes │
 │ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ docker     │
 │ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ git        │
 │ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ terraform  │
-│ 1270532 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ python     │
 │ 1273376 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ rust       │
 │ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ rust       │
 │ 1270530 │ Trading Data Engineer                                      │        375000.0 │ Selby Jennings │ aws        │
 │  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ kafka      │
-│  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ numpy      │
-│  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ hadoop     │
 │  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ pandas     │
+│   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ python     │
+│  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ hadoop     │
 │   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ kafka      │
+│  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ numpy      │
 │  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ pyspark    │
+│  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ spark      │
 │   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ pandas     │
 │   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ hadoop     │
-│   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ numpy      │
-│  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ spark      │
 │  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ kubernetes │
+│   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ numpy      │
 │   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ pyspark    │
-│   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ spark      │
 │   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ kubernetes │
-│   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ python     │
+│   85490 │ Data Engineer                                              │        325000.0 │ Engtal         │ spark      │
 │  137801 │ Data Engineer                                              │        325000.0 │ Engtal         │ python     │
 ├─────────┴────────────────────────────────────────────────────────────┴─────────────────┴────────────────┴────────────┤
 │ 51 rows                                                                                                    5 columns │
