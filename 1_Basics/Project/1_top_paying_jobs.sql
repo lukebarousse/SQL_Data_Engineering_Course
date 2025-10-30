@@ -6,6 +6,8 @@ Question: What are the top-paying data engineer jobs?
 - Why? Highlight the top-paying opportunities for Data Engineers, offering insights into employment options and location flexibility.
 */
 
+.mode markdown
+.output '1_DQL/Project/1_top_paying_jobs.md'
 SELECT	
 	job_id,
 	job_title,
