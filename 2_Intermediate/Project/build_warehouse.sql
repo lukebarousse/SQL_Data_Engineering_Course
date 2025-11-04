@@ -23,4 +23,4 @@
 .read 06_verify_schema.sql
 
 -- Final summary
-SELECT 'Star schema build completed successfully!' as status;
+SELECT 'Warehouse build completed successfully!' as status;

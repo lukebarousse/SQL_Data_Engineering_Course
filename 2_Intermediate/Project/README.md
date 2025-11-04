@@ -41,7 +41,7 @@ This project demonstrates advanced SQL skills including:
 
 ### Option 1: Master Script (Recommended)
 ```bash
-duckdb -c ".read master_build.sql"
+duckdb -c ".read build_warehouse.sql"
 ```
 
 ### Option 2: Shell Script with Error Handling
@@ -59,7 +59,7 @@ chmod +x build_warehouse.sh
 ├── 04_populate_fact_table.sql # Fact table population
 ├── 05_populate_bridge_table.sql # Bridge table population
 ├── 06_verify_schema.sql       # Schema verification queries
-├── master_build.sql          # Master execution script
+├── build_warehouse.sql          # Production build script
 └── build_warehouse.sh        # Production shell script
 ```
 
