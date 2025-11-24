@@ -2,3 +2,4 @@
 .cursorrules
 .DS_Store
 data/
+*.duckdb

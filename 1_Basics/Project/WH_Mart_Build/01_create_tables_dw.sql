@@ -1,4 +1,4 @@
--- Step 1: Create star schema tables
+-- Step 1: DW - Create star schema tables (Data Warehouse)
 -- Run this first
 
 -- Set up initial configurations
@@ -14,13 +14,14 @@ DROP TABLE IF EXISTS company_dim;
 -- Create company_dim table
 CREATE TABLE company_dim (
     company_id INTEGER PRIMARY KEY,
-    company_name VARCHAR UNIQUE NOT NULL
+    name VARCHAR
 );
 
 -- Create skills_dim table
 CREATE TABLE skills_dim (
     skill_id INTEGER PRIMARY KEY,
-    skill VARCHAR UNIQUE NOT NULL
+    skill VARCHAR,
+    type VARCHAR
 );
 
 -- Create job_postings_fact table (must be created before skills_job_dim)
@@ -40,19 +41,15 @@ CREATE TABLE job_postings_fact (
     job_country VARCHAR,
     salary_rate VARCHAR,
     salary_year_avg DOUBLE,
-    salary_hour_avg DOUBLE,
-    FOREIGN KEY (company_id) REFERENCES company_dim(company_id)
+    salary_hour_avg DOUBLE
 );
 
 -- Create skills_job_dim bridge table (after job_postings_fact exists)
 CREATE TABLE skills_job_dim (
     skill_id INTEGER,
     job_id INTEGER,
-    PRIMARY KEY (skill_id, job_id),
-    FOREIGN KEY (skill_id) REFERENCES skills_dim(skill_id),
-    FOREIGN KEY (job_id) REFERENCES job_postings_fact(job_id)
+    PRIMARY KEY (skill_id, job_id)
 );
 
 -- Verify tables were created
 SHOW TABLES;
-
