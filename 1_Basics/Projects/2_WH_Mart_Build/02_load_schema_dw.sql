@@ -6,18 +6,13 @@
 INSTALL httpfs;
 LOAD httpfs;
 
--- Load company_dim table
--- Filter out NULL company names
+-- Load dimension tables first (no FK dependencies)
 INSERT INTO company_dim (company_id, name)
 SELECT company_id, name
 FROM read_csv('https://storage.googleapis.com/sql_de/company_dim.csv', 
     AUTO_DETECT=true,
-    HEADER=true)
-WHERE name IS NOT NULL;
+    HEADER=true);
 
--- Load skills_dim table
--- Note: CSV has "skills" column, not "skill"
--- Filter out NULL skills
 INSERT INTO skills_dim (skill_id, skill, type)
 SELECT skill_id, skills AS skill, type
 FROM read_csv('https://storage.googleapis.com/sql_de/skills_dim.csv', 
@@ -25,7 +20,7 @@ FROM read_csv('https://storage.googleapis.com/sql_de/skills_dim.csv',
     HEADER=true)
 WHERE skills IS NOT NULL;
 
--- Load job_postings_fact table
+-- Load fact table second (FK references company_dim - must load after dimensions)
 INSERT INTO job_postings_fact (
     job_id, company_id, job_title_short, job_title, job_location, 
     job_via, job_schedule_type, job_work_from_home, search_location,
@@ -41,14 +36,14 @@ FROM read_csv('https://storage.googleapis.com/sql_de/job_postings_fact.csv',
     AUTO_DETECT=true,
     HEADER=true);
 
--- Load skills_job_dim bridge table
+-- Load bridge table last (FKs reference skills_dim and job_postings_fact)
 INSERT INTO skills_job_dim (skill_id, job_id)
 SELECT skill_id, job_id
 FROM read_csv('https://storage.googleapis.com/sql_de/skills_job_dim.csv', 
     AUTO_DETECT=true,
     HEADER=true);
 
--- Verify star schema data was loaded correctly
+-- Verify data was loaded correctly
 SELECT 'Company Dimension' AS table_name, COUNT(*) as record_count FROM company_dim
 UNION ALL
 SELECT 'Skills Dimension', COUNT(*) FROM skills_dim
@@ -56,6 +51,26 @@ UNION ALL
 SELECT 'Job Postings Fact', COUNT(*) FROM job_postings_fact
 UNION ALL
 SELECT 'Skills Job Bridge', COUNT(*) FROM skills_job_dim;
+
+-- Verify referential integrity (should return 0 for all queries)
+SELECT '=== Referential Integrity Check ===' AS info;
+SELECT 
+    'Orphaned company_ids in job_postings_fact' AS check_type,
+    COUNT(*) AS orphaned_count
+FROM job_postings_fact 
+WHERE company_id NOT IN (SELECT company_id FROM company_dim);
+
+SELECT 
+    'Orphaned skill_ids in skills_job_dim' AS check_type,
+    COUNT(*) AS orphaned_count
+FROM skills_job_dim 
+WHERE skill_id NOT IN (SELECT skill_id FROM skills_dim);
+
+SELECT 
+    'Orphaned job_ids in skills_job_dim' AS check_type,
+    COUNT(*) AS orphaned_count
+FROM skills_job_dim 
+WHERE job_id NOT IN (SELECT job_id FROM job_postings_fact);
 
 -- Show sample data
 SELECT '=== Company Dimension Sample ===' AS info;

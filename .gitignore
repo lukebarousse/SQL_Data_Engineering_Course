@@ -3,3 +3,4 @@
 .DS_Store
 data/
 *.duckdb
+course_build.sql

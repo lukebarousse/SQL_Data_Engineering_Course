@@ -41,14 +41,17 @@ CREATE TABLE job_postings_fact (
     job_country VARCHAR,
     salary_rate VARCHAR,
     salary_year_avg DOUBLE,
-    salary_hour_avg DOUBLE
+    salary_hour_avg DOUBLE,
+    FOREIGN KEY (company_id) REFERENCES company_dim(company_id)
 );
 
 -- Create skills_job_dim bridge table (after job_postings_fact exists)
 CREATE TABLE skills_job_dim (
     skill_id INTEGER,
     job_id INTEGER,
-    PRIMARY KEY (skill_id, job_id)
+    PRIMARY KEY (skill_id, job_id),
+    FOREIGN KEY (skill_id) REFERENCES skills_dim(skill_id),
+    FOREIGN KEY (job_id) REFERENCES job_postings_fact(job_id)
 );
 
 -- Verify tables were created
