@@ -8,16 +8,16 @@ Question: What are the most in-demand skills for data engineers?
 */
 
 SELECT 
-    skills,
-    COUNT(skills_job_dim.job_id) AS demand_count
-FROM job_postings_fact
-INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
-INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
+    sd.skills,
+    COUNT(sjd.job_id) AS demand_count
+FROM job_postings_fact jpf
+INNER JOIN skills_job_dim sjd ON jpf.job_id = sjd.job_id
+INNER JOIN skills_dim sd ON sjd.skill_id = sd.skill_id
 WHERE
-    job_title_short = 'Data Engineer' 
-    AND job_work_from_home = True 
+    jpf.job_title_short = 'Data Engineer' 
+    AND jpf.job_work_from_home = True 
 GROUP BY
-    skills
+    sd.skills
 ORDER BY
     demand_count DESC
 LIMIT 10;
