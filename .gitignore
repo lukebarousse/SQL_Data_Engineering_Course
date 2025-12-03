@@ -1,6 +1,37 @@
-.vscode
-.cursorrules
-.DS_Store
-data/
+# 🗄️ Local databases
 *.duckdb
+*.sqlite
+*.db
+
+# 📊 Raw data
+/data/raw/
+/data/tmp/
+/data/intermediate/
+/exports/
+
+# 🔐 Secrets
+.env
+.env.*
+*.key
+*.pem
+
+# 💻 System files
+.DS_Store
+Thumbs.db
+
+# 📂 Logs and temp files
+logs/
+tmp/
+*.log
+
+# ⚙️ Tooling (dbt, VS Code, venvs, etc.)
+
+target/
+.idea/
+.vscode/
+__pycache__/
+
+# Luke's files
+data/
 course_build.sql
+.cursorrules
