@@ -1,5 +1,7 @@
 # 🔍 Exploratory Data Analysis w/ SQL: Job Market Analytics
 
+![EDA Project Overview](../../../Resources/images/1_1_Project1_EDA.png)
+
 A SQL project analyzing the data engineer job market using real job posting data. It demonstrates my ability to **write production-quality analytical SQL, design efficient queries, and turn business questions into data-driven insights**.
 
 ---
