@@ -2,6 +2,17 @@
 
 Data Nerds! This repo contains all the files needed to follow along my free course: SQL for Data Engineering
 ![SQL for Data Engineering](Resources/images/SQL_Data_Engineering_thumbnail.png)
+[Support the course and get a bunch of perks](https://www.lukebarousse.com/courses/sql-for-data-engineering)
+
+## Special Thanks 🙌
+
+<div style="width:25%; margin:auto;">
+  <img src="Resources/images/0_SerpAPI.png" alt="SerpAPI Logo" style="width:100%;">
+</div>
+
+This course wouldn't have been possible without [SerpAPI](https://serpapi.com/), who generously provided the credits necessary to pull the job postings data used throughout this course. Without their support, the comprehensive dataset that powers all the SQL examples and projects simply wouldn't exist.
+
+If you're interested in using SerpAPI for your own data projects, [sign up here](https://serpapi.com/) and mention **Luke sent you** to get an additional **20% OFF** on paid plans!
 
 ## Team Members 👥
 **🙋🏼‍♂️ Course Leader:** [Luke Barousse](https://www.linkedin.com/in/luke-b)  
