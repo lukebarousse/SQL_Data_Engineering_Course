@@ -1,6 +1,6 @@
 # 🏗️ Data Warehouse & Mart Build: Production ETL Pipeline
 
-An end-to-end data engineering pipeline that transforms raw CSV files from Google Cloud Storage into a normalized star schema data warehouse, then builds analytical data marts. This demonstrates my ability to **design dimensional models, build production-ready ETL pipelines, and create analytics-ready data structures**.
+An end-to-end data engineering pipeline that transforms raw CSV files from Google Cloud Storage into a normalized star schema data warehouse, then builds analytical data marts.
 
 ![Data Pipeline Architecture](../../../Resources/images/1_2_Project2_Data_Pipeline.png)
 
@@ -23,18 +23,15 @@ If you only have a minute, review these:
 
 ## 🧩 Problem & Context
 
-Data teams need to transform raw data into analytics-ready structures:
+Raw job posting data arrives as flat CSV files in Google Cloud Storage—not structured for analytical queries. Analysts need to answer:
 
-- 🎯 **Data integration:** *How do we load data from cloud storage into a queryable warehouse?*  
-- 💰 **Dimensional modeling:** *What's the best schema design for analytical queries?*  
-- ⚖️ **Performance optimization:** *How do we pre-aggregate data for fast BI tool consumption?*  
+- Which skills are most in-demand over time?
+- What are hiring trends by company and location?
+- How do salary patterns vary by role and skill?
 
-This project shows how I:
+**Challenge:** Data teams need a single source of truth system—a data warehouse—to enable consistent, reliable analysis across the organization. Additionally, specialized data marts are required to optimize resources by pre-aggregating data for specific business use cases, reducing query complexity and improving performance for common analytical patterns.
 
-- **Design schemas:** Model data using star schema principles with proper grain and additive measures  
-- **Build pipelines:** Create idempotent ETL processes that can be safely rerun  
-- **Optimize for analytics:** Structure data marts for specific business questions with pre-aggregated metrics  
-- **Ensure quality:** Implement validation checks and proper data typing throughout the pipeline  
+**Solution:** End-to-end ETL pipeline that extracts CSVs from cloud storage, normalizes them into a star schema warehouse (separating facts from dimensions), and creates three specialized data marts optimized for specific use cases (flat queries, skill demand analysis, company hiring trends).  
 
 ---
 
@@ -67,24 +64,65 @@ This project shows how I:
 
 ## 🏗️ Pipeline Architecture
 
-### High-Level Flow
 
-1. **Data Storage** – Job posting CSVs stored in Google Cloud Storage
-2. **Data Warehouse** – Star schema with `company_dim`, `skills_dim`, `job_postings_fact`, `skills_job_dim`
-3. **Data Marts** – Three specialized marts: `flat_mart`, `skills_mart`, `company_mart`
-4. **Data Serving** – BI tools (Excel, Power BI, Tableau, Python) consume from marts and warehouse
+![Data Pipeline Architecture](../../../Resources/images/1_2_Project2_Data_Pipeline.png)
 
-### Pipeline Components
+The pipeline transforms job posting CSVs from Google Cloud Storage into a normalized star schema data warehouse, then builds three specialized analytical data marts. BI tools (Excel, Power BI, Tableau, Python) consume from both the warehouse and marts.
 
-1. **[Data Warehouse Creation](./01_create_tables_dw.sql)** – Defines star schema with 4 core tables
-2. **[Data Loading](./02_load_schema_dw.sql)** – Extracts CSVs from GCS and loads into warehouse tables
-3. **[Flat Mart](./03_create_flat_mart.sql)** – Denormalized table with all dimensions for ad-hoc queries
-4. **[Skills Mart](./04_create_skills_mart.sql)** – Time-series skill demand analysis with additive measures
-5. **[Company Mart](./05_create_company_mart.sql)** – Company hiring trends by role, location, and month
+### Data Warehouse
+
+The data warehouse implements a star schema with `company_dim`, `skills_dim`, `job_postings_fact`, and `skills_job_dim` tables.
+
+![Data Warehouse Schema](../../../Resources/images/1_2_Data_Warehouse.png)
+
+- **SQL Files:**
+  - [`01_create_tables_dw.sql`](./01_create_tables_dw.sql) – Defines star schema with 4 core tables
+  - [`02_load_schema_dw.sql`](./02_load_schema_dw.sql) – Extracts CSVs from GCS and loads into warehouse tables
+- **Purpose:** Star schema serving as single source of truth for analytical queries
+- **Grain:** One row per job posting in the fact table (`job_postings_fact`)
+
+### Flat Mart
+
+Denormalized table with all dimensions for ad-hoc queries.
+
+![Flat Mart Schema](../../../Resources/images/1_2_Flat_Mart.png)
+
+- **SQL File:** [`03_create_flat_mart.sql`](./03_create_flat_mart.sql) – Builds denormalized table with all dimensions joined
+- **Purpose:** Denormalized table for quick ad-hoc queries
+- **Grain:** One row per job posting with all dimensions joined
+
+### Skills Mart
+
+Time-series skill demand analysis with additive measures.
+
+![Skills Mart Schema](../../../Resources/images/1_2_Skills_Mart.png)
+
+- **SQL File:** [`04_create_skills_mart.sql`](./04_create_skills_mart.sql) – Builds time-series skill demand mart
+- **Purpose:** Time-series analysis of skill demand over time with additive measures
+- **Grain:** `skill_id + month_start_date + job_title_short`
+- **Key Features:** All measures are additive (counts/sums) for safe re-aggregation
+
+### Company Mart
+
+Company hiring trends by role, location, and month.
+
+![Company Mart Schema](../../../Resources/images/1_2_Company_Mart.png)
+
+- **SQL File:** [`05_create_company_mart.sql`](./05_create_company_mart.sql) – Builds company hiring trends mart
+- **Purpose:** Company hiring trends analysis by role, location, and month
+- **Grain:** `company_id + job_title_short_id + location_id + month_start_date`
+- **Key Features:** Bridge tables for many-to-many relationships (company-location, job title hierarchies)
 
 ---
 
 ## 💻 Data Engineering Skills Demonstrated
+
+### ETL Pipeline Development
+
+- **Extract:** Direct CSV loading from Google Cloud Storage using DuckDB's `httpfs` extension  
+- **Transform:** Data normalization, type conversion (`CAST`, `DATE_TRUNC`), and quality filtering  
+- **Load:** Idempotent table creation with `DROP TABLE IF EXISTS` patterns  
+- **Orchestration:** Master SQL script (`build_dw_marts.sql`) for automated pipeline execution  
 
 ### Dimensional Modeling
 
@@ -94,12 +132,7 @@ This project shows how I:
 - **Additive Measures:** Counts and sums that can be safely re-aggregated at any level  
 - **Surrogate Keys:** Sequential ID generation using CTEs with self-joins (company_mart build only)  
 
-### ETL Pipeline Development
 
-- **Extract:** Direct CSV loading from Google Cloud Storage using DuckDB's `httpfs` extension  
-- **Transform:** Data normalization, type conversion (`CAST`, `DATE_TRUNC`), and quality filtering  
-- **Load:** Idempotent table creation with `DROP TABLE IF EXISTS` patterns  
-- **Orchestration:** Master SQL script (`build_dw_marts.sql`) for automated pipeline execution  
 
 ### SQL Advanced Techniques
 
@@ -117,21 +150,3 @@ This project shows how I:
 - **Type Safety:** Proper data type definitions (`VARCHAR`, `INTEGER`, `DOUBLE`, `BOOLEAN`, `TIMESTAMP`)  
 - **Schema Organization:** Separate schemas (`flat_mart`, `skills_mart`, `company_mart`) for logical separation  
 - **Error Handling:** Structured script execution with clear error messages and progress reporting  
-
----
-
-## 📊 Data Mart Details
-
-### Flat Mart (`flat_mart.job_postings`)
-- **Purpose:** Denormalized table for quick ad-hoc queries
-- **Grain:** One row per job posting with all dimensions joined
-
-### Skills Mart (`skills_mart`)
-- **Purpose:** Time-series analysis of skill demand over time with additive measures
-- **Grain:** `skill_id + month_start_date + job_title_short`
-- **Key Features:** All measures are additive (counts/sums) for safe re-aggregation
-
-### Company Mart (`company_mart`)
-- **Purpose:** Company hiring trends analysis by role, location, and month
-- **Grain:** `company_id + job_title_short_id + location_id + month_start_date`
-- **Key Features:** Bridge tables for many-to-many relationships (company-location, job title hierarchies)
