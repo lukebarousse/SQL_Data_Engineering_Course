@@ -10,14 +10,24 @@ CREATE SCHEMA company_mart;
 -- Step 2: Create dimension tables
 
 -- 1. Company dimension
-CREATE TABLE company_mart.dim_company AS
+CREATE TABLE company_mart.dim_company (
+    company_id INTEGER PRIMARY KEY,
+    company_name VARCHAR
+);
+
+INSERT INTO company_mart.dim_company (company_id, company_name)
 SELECT
     company_id,
     name AS company_name
 FROM company_dim;
 
 -- 2. Job title short dimension (distinct job_title_short values with IDs)
-CREATE TABLE company_mart.dim_job_title_short AS
+CREATE TABLE company_mart.dim_job_title_short (
+    job_title_short_id INTEGER PRIMARY KEY,
+    job_title_short VARCHAR
+);
+
+INSERT INTO company_mart.dim_job_title_short (job_title_short_id, job_title_short)
 WITH distinct_titles AS (
     SELECT DISTINCT job_title_short
     FROM job_postings_fact
@@ -39,7 +49,12 @@ FROM numbered_titles
 ORDER BY job_title_short;
 
 -- 2b. Job title dimension (distinct job_title values with IDs)
-CREATE TABLE company_mart.dim_job_title AS
+CREATE TABLE company_mart.dim_job_title (
+    job_title_id INTEGER PRIMARY KEY,
+    job_title VARCHAR
+);
+
+INSERT INTO company_mart.dim_job_title (job_title_id, job_title)
 WITH distinct_titles AS (
     SELECT DISTINCT job_title
     FROM job_postings_fact
@@ -61,14 +76,20 @@ FROM numbered_titles
 ORDER BY job_title;
 
 -- 3. Location dimension (unique location/country combinations)
-CREATE TABLE company_mart.dim_location AS
+CREATE TABLE company_mart.dim_location (
+    location_id INTEGER PRIMARY KEY,
+    job_country VARCHAR,
+    job_location VARCHAR
+);
+
+INSERT INTO company_mart.dim_location (location_id, job_country, job_location)
 WITH distinct_locations AS (
     SELECT DISTINCT
         job_country,
         job_location
     FROM job_postings_fact
     WHERE job_country IS NOT NULL
-       OR job_location IS NOT NULL
+       AND job_location IS NOT NULL
 ),
 numbered_locations AS (
     SELECT 
@@ -89,7 +110,13 @@ FROM numbered_locations
 ORDER BY job_country, job_location;
 
 -- 4. Month-level date dimension
-CREATE TABLE company_mart.dim_date_month AS
+CREATE TABLE company_mart.dim_date_month (
+    month_start_date DATE PRIMARY KEY,
+    year INTEGER,
+    month INTEGER
+);
+
+INSERT INTO company_mart.dim_date_month (month_start_date, year, month)
 SELECT DISTINCT
     DATE_TRUNC('month', job_posted_date)::DATE AS month_start_date,
     EXTRACT(year FROM job_posted_date) AS year,
@@ -99,7 +126,15 @@ WHERE job_posted_date IS NOT NULL;
 
 -- 5. Bridge table: Company to Location (many-to-many)
 -- Shows which companies hire in which locations
-CREATE TABLE company_mart.bridge_company_location AS
+CREATE TABLE company_mart.bridge_company_location (
+    company_id INTEGER,
+    location_id INTEGER,
+    PRIMARY KEY (company_id, location_id),
+    FOREIGN KEY (company_id) REFERENCES company_mart.dim_company(company_id),
+    FOREIGN KEY (location_id) REFERENCES company_mart.dim_location(location_id)
+);
+
+INSERT INTO company_mart.bridge_company_location (company_id, location_id)
 SELECT DISTINCT
     jpf.company_id,
     loc.location_id
@@ -111,7 +146,15 @@ WHERE jpf.company_id IS NOT NULL;
 
 -- 6. Bridge table: Job Title Short to Job Title (many-to-many)
 -- Shows all job_title variations for each job_title_short
-CREATE TABLE company_mart.bridge_job_title AS
+CREATE TABLE company_mart.bridge_job_title (
+    job_title_short_id INTEGER,
+    job_title_id INTEGER,
+    PRIMARY KEY (job_title_short_id, job_title_id),
+    FOREIGN KEY (job_title_short_id) REFERENCES company_mart.dim_job_title_short(job_title_short_id),
+    FOREIGN KEY (job_title_id) REFERENCES company_mart.dim_job_title(job_title_id)
+);
+
+INSERT INTO company_mart.bridge_job_title (job_title_short_id, job_title_id)
 SELECT DISTINCT
     djs.job_title_short_id,
     djt.job_title_id
@@ -125,7 +168,37 @@ WHERE jpf.job_title_short IS NOT NULL
 
 -- Step 3: Create fact table - fact_company_hiring_monthly
 -- Grain: company_id + job_title_short_id + job_country + posted_month
-CREATE TABLE company_mart.fact_company_hiring_monthly AS
+CREATE TABLE company_mart.fact_company_hiring_monthly (
+    company_id INTEGER,
+    job_title_short_id INTEGER,
+    job_country VARCHAR,
+    month_start_date DATE,
+    postings_count INTEGER,
+    median_salary_year DOUBLE,
+    min_salary_year DOUBLE,
+    max_salary_year DOUBLE,
+    remote_share DOUBLE,
+    health_insurance_share DOUBLE,
+    no_degree_mention_share DOUBLE,
+    PRIMARY KEY (company_id, job_title_short_id, job_country, month_start_date),
+    FOREIGN KEY (company_id) REFERENCES company_mart.dim_company(company_id),
+    FOREIGN KEY (job_title_short_id) REFERENCES company_mart.dim_job_title_short(job_title_short_id),
+    FOREIGN KEY (month_start_date) REFERENCES company_mart.dim_date_month(month_start_date)
+);
+
+INSERT INTO company_mart.fact_company_hiring_monthly (
+    company_id,
+    job_title_short_id,
+    job_country,
+    month_start_date,
+    postings_count,
+    median_salary_year,
+    min_salary_year,
+    max_salary_year,
+    remote_share,
+    health_insurance_share,
+    no_degree_mention_share
+)
 WITH job_postings_prepared AS (
     SELECT
         jpf.company_id,
@@ -144,6 +217,7 @@ WITH job_postings_prepared AS (
     WHERE
         jpf.company_id IS NOT NULL
         AND jpf.job_posted_date IS NOT NULL
+        AND jpf.job_country IS NOT NULL
 )
 SELECT
     company_id,

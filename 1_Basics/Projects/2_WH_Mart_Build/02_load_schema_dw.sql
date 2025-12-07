@@ -13,8 +13,8 @@ FROM read_csv('https://storage.googleapis.com/sql_de/company_dim.csv',
     AUTO_DETECT=true,
     HEADER=true);
 
-INSERT INTO skills_dim (skill_id, skill, type)
-SELECT skill_id, skills AS skill, type
+INSERT INTO skills_dim (skill_id, skills, type)
+SELECT skill_id, skills, type
 FROM read_csv('https://storage.googleapis.com/sql_de/skills_dim.csv', 
     AUTO_DETECT=true,
     HEADER=true)
