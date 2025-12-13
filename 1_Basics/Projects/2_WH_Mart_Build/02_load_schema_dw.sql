@@ -7,8 +7,8 @@ INSTALL httpfs;
 LOAD httpfs;
 
 -- Load dimension tables first (no FK dependencies)
-INSERT INTO company_dim (company_id, name)
-SELECT company_id, name
+INSERT INTO company_dim (company_id, name, link, link_google, thumbnail)
+SELECT company_id, name, link, link_google, thumbnail
 FROM read_csv('https://storage.googleapis.com/sql_de/company_dim.csv', 
     AUTO_DETECT=true,
     HEADER=true);
