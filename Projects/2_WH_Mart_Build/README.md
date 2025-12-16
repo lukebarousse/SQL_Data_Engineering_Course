@@ -2,7 +2,7 @@
 
 An end-to-end data engineering pipeline that transforms raw CSV files from Google Cloud Storage into a normalized star schema data warehouse, then builds analytical data marts.
 
-![Data Pipeline Architecture](../../../Resources/images/1_2_Project2_Data_Pipeline.png)
+![Data Pipeline Architecture](../../Resources/images/1_2_Project2_Data_Pipeline.png)
 
 ---
 
@@ -73,7 +73,7 @@ The pipeline transforms job posting CSVs from Google Cloud Storage into a normal
 
 The data warehouse implements a star schema with `company_dim`, `skills_dim`, `job_postings_fact`, and `skills_job_dim` tables.
 
-![Data Warehouse Schema](../../../Resources/images/1_2_Data_Warehouse.png)
+![Data Warehouse Schema](../../Resources/images/1_2_Data_Warehouse.png)
 
 - **SQL Files:**
   - [`01_create_tables_dw.sql`](./01_create_tables_dw.sql) – Defines star schema with 4 core tables
@@ -85,7 +85,7 @@ The data warehouse implements a star schema with `company_dim`, `skills_dim`, `j
 
 Denormalized table with all dimensions for ad-hoc queries.
 
-![Flat Mart Schema](../../../Resources/images/1_2_Flat_Mart.png)
+![Flat Mart Schema](../../Resources/images/1_2_Flat_Mart.png)
 
 - **SQL File:** [`03_create_flat_mart.sql`](./03_create_flat_mart.sql) – Builds denormalized table with all dimensions joined
 - **Purpose:** Denormalized table for quick ad-hoc queries
@@ -95,7 +95,7 @@ Denormalized table with all dimensions for ad-hoc queries.
 
 Time-series skill demand analysis with additive measures.
 
-![Skills Mart Schema](../../../Resources/images/1_2_Skills_Mart.png)
+![Skills Mart Schema](../../Resources/images/1_2_Skills_Mart.png)
 
 - **SQL File:** [`04_create_skills_mart.sql`](./04_create_skills_mart.sql) – Builds time-series skill demand mart
 - **Purpose:** Time-series analysis of skill demand over time with additive measures
@@ -106,7 +106,7 @@ Time-series skill demand analysis with additive measures.
 
 Company hiring trends by role, location, and month.
 
-![Company Mart Schema](../../../Resources/images/1_2_Company_Mart.png)
+![Company Mart Schema](../../Resources/images/1_2_Company_Mart.png)
 
 - **SQL File:** [`05_create_company_mart.sql`](./05_create_company_mart.sql) – Builds company hiring trends mart
 - **Purpose:** Company hiring trends analysis by role, location, and month
