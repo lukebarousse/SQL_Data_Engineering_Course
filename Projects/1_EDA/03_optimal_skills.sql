@@ -50,7 +50,6 @@ Databases & Cloud:
 
 Summary:
 Skills that consistently appear near the top balance a strong combination of market demand (job security) and financial benefit. Python, SQL, AWS, Spark, Airflow, and Terraform are particularly strategic for both immediate opportunities and longer-term career growth in data engineering.
-*/
 
 ┌────────────┬───────────────┬──────────────┬─────────────────┬───────────────┐
 │   skills   │ median_salary │ demand_count │ ln_demand_count │ optimal_score │
