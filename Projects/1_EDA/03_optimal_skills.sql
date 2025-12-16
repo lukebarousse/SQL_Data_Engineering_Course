@@ -1,15 +1,16 @@
 /*
-Question: What are the most optimal skills to learn for data engineers (high demand and high salary)?
-- Identify skills that are both in high demand and associated with high median salaries for Data Engineer roles
-- Focus on remote positions with specified salaries
-- Why? Helps identify the most valuable skills to learn by finding the intersection of high demand (job security) 
-    and high compensation (financial benefits), providing strategic guidance for data engineering career development
+Question: What are the most optimal skills for data engineers—balancing both demand and salary using the natural log of demand?
+- Use the natural logarithm of demand count combined with median salary to calculate an "optimal score" for each skill.
+- Focus only on remote positions for Data Engineers with specified annual salaries.
+- Why? This approach highlights skills that provide a strategic balance of market demand and financial reward, weighting core skills appropriately instead of letting outlier (rare) skills distort the results. The natural log transformation ensures that both high-salary and widely-in-demand skills surface as the most practical and valuable to learn for data engineering careers.
 */
 
 SELECT 
     sd.skills,
+    ROUND(MEDIAN(jpf.salary_year_avg), 1) AS median_salary,
     COUNT(sjd.job_id) AS demand_count,
-    ROUND(MEDIAN(jpf.salary_year_avg), 0) AS median_salary
+    ROUND(LN(COUNT(sjd.job_id)), 1) AS ln_demand_count,
+    ROUND((ln_demand_count * median_salary)/1_000_000, 2) AS optimal_score
 FROM job_postings_fact jpf
 INNER JOIN skills_job_dim sjd ON jpf.job_id = sjd.job_id
 INNER JOIN skills_dim sd ON sjd.skill_id = sd.skill_id
@@ -19,66 +20,69 @@ WHERE
     AND jpf.job_work_from_home = True 
 GROUP BY
     sd.skills
+HAVING 
+    COUNT(sjd.job_id) >= 100
 ORDER BY
-    demand_count DESC,
-    median_salary DESC
+    optimal_score DESC
 LIMIT 25;
 
 /*
-Here's a breakdown of the most optimal skills for Data Engineers:
+Here's a breakdown of the most optimal skills for Data Engineers, based on both high demand and high salaries:
 
-High-Demand Programming Languages:
-- Python and SQL remain the most in-demand skills, each with over 1100 postings and strong median salaries ($135K and $130K, respectively).
-- Java maintains high demand (303 postings) with a $135K median salary.
-- Scala offers a solid median salary ($137K) with 247 postings.
+Top Skills by Optimal Score:
+- Terraform leads the list with a $184K median salary and 193 postings, resulting in the highest overall "optimal score".
+- Python and SQL dominate demand (over 1100 postings each), with strong median salaries of $135K and $130K, respectively.
+- AWS (783 postings, $137K median), Spark (503 postings, $140K median), and Airflow (386 postings, $150K median) are all highly sought-after cloud and big data technologies.
+- Kafka offers high compensation ($145K median) and solid demand (292 postings).
+- Tools like Snowflake, Azure, and Databricks each have 250–475 postings and median salaries between $128–$137K.
 
-Cloud & Big Data Technologies:
-- AWS continues as the leading cloud platform (783 postings, $137K median salary).
-- Azure has 475 postings and a $128K median salary.
-- Spark is highly sought after (503 postings, $140K median salary).
-- Snowflake has 438 postings and a $135K median salary.
+DevOps & Engineering Tools:
+- Airflow ($150K), Kubernetes ($150.5K), and Docker ($135K) stand out for their mix of demand and top median salaries.
+- Git ($140K/208 postings) and Github ($135K/127 postings) have broad utility and competitive compensation.
 
-Data Pipeline & DevOps Tools:
-- Airflow shows robust demand (386 postings) and a top-tier $150K median salary.
-- Terraform, with 193 postings, delivers the highest median salary in the top 25 ($184K).
-- Kubernetes and Docker appear with 147 and 144 postings, with median salaries of $150K and $135K, respectively.
-- Git appears in 208 postings, offering a $140K median salary.
+Noteworthy Languages:
+- Java (303 postings, $135K median) and Scala (247 postings, $137K median) remain strong choices for well-paid data engineering roles.
+- Go ($140K/113 postings) is another programming language with excellent compensation.
 
-Streaming & Databases:
-- Kafka delivers high compensation ($145K) and solid demand (292 postings).
-- NoSQL, SQL Server, and PostgreSQL are all present, with median salaries ranging from $122K to $134K.
-- MongoDB and Redshift demonstrate niche demand (136 and 274 postings) with competitive compensation ($135K and $130K, respectively).
+Databases & Cloud:
+- Redshift ($130K/274 postings), GCP ($136K/196 postings), Hadoop ($135K/198 postings), NoSQL ($134.4K/193 postings), and MongoDB ($135.8K/136 postings) add to a well-rounded data engineering skill set.
+- R, Pyspark, and BigQuery each deliver competitive salaries and meet the threshold for demand.
 
-┌────────────┬──────────────┬───────────────┐
-│   skills   │ demand_count │ median_salary │
-│  varchar   │    int64     │    double     │
-├────────────┼──────────────┼───────────────┤
-│ python     │         1133 │      135000.0 │
-│ sql        │         1128 │      130000.0 │
-│ aws        │          783 │      137320.0 │
-│ spark      │          503 │      140000.0 │
-│ azure      │          475 │      128000.0 │
-│ snowflake  │          438 │      135500.0 │
-│ airflow    │          386 │      150000.0 │
-│ java       │          303 │      135000.0 │
-│ kafka      │          292 │      145000.0 │
-│ redshift   │          274 │      130000.0 │
-│ databricks │          266 │      132750.0 │
-│ scala      │          247 │      137290.0 │
-│ git        │          208 │      140000.0 │
-│ hadoop     │          198 │      135000.0 │
-│ gcp        │          196 │      136000.0 │
-│ terraform  │          193 │      184000.0 │
-│ nosql      │          193 │      134415.0 │
-│ tableau    │          164 │      115000.0 │
-│ pyspark    │          152 │      140000.0 │
-│ kubernetes │          147 │      150500.0 │
-│ docker     │          144 │      135000.0 │
-│ sql server │          139 │      120000.0 │
-│ mongodb    │          136 │      135750.0 │
-│ r          │          133 │      134775.0 │
-│ postgresql │          129 │      122500.0 │
-├────────────┴──────────────┴───────────────┤
-│ 25 rows                         3 columns │
-└───────────────────────────────────────────┘
+Summary:
+Skills that consistently appear near the top balance a strong combination of market demand (job security) and financial benefit. Python, SQL, AWS, Spark, Airflow, and Terraform are particularly strategic for both immediate opportunities and longer-term career growth in data engineering.
+*/
+
+┌────────────┬───────────────┬──────────────┬─────────────────┬───────────────┐
+│   skills   │ median_salary │ demand_count │ ln_demand_count │ optimal_score │
+│  varchar   │    double     │    int64     │     double      │    double     │
+├────────────┼───────────────┼──────────────┼─────────────────┼───────────────┤
+│ terraform  │      184000.0 │          193 │             5.3 │          0.98 │
+│ python     │      135000.0 │         1133 │             7.0 │          0.95 │
+│ aws        │      137320.3 │          783 │             6.7 │          0.92 │
+│ sql        │      130000.0 │         1128 │             7.0 │          0.91 │
+│ airflow    │      150000.0 │          386 │             6.0 │           0.9 │
+│ spark      │      140000.0 │          503 │             6.2 │          0.87 │
+│ kafka      │      145000.0 │          292 │             5.7 │          0.83 │
+│ snowflake  │      135500.0 │          438 │             6.1 │          0.83 │
+│ azure      │      128000.0 │          475 │             6.2 │          0.79 │
+│ java       │      135000.0 │          303 │             5.7 │          0.77 │
+│ scala      │      137290.5 │          247 │             5.5 │          0.76 │
+│ kubernetes │      150500.0 │          147 │             5.0 │          0.75 │
+│ databricks │      132750.0 │          266 │             5.6 │          0.74 │
+│ git        │      140000.0 │          208 │             5.3 │          0.74 │
+│ redshift   │      130000.0 │          274 │             5.6 │          0.73 │
+│ gcp        │      136000.0 │          196 │             5.3 │          0.72 │
+│ hadoop     │      135000.0 │          198 │             5.3 │          0.72 │
+│ nosql      │      134415.0 │          193 │             5.3 │          0.71 │
+│ pyspark    │      140000.0 │          152 │             5.0 │           0.7 │
+│ docker     │      135000.0 │          144 │             5.0 │          0.68 │
+│ mongodb    │      135750.0 │          136 │             4.9 │          0.67 │
+│ r          │      134775.0 │          133 │             4.9 │          0.66 │
+│ go         │      140000.0 │          113 │             4.7 │          0.66 │
+│ github     │      135000.0 │          127 │             4.8 │          0.65 │
+│ bigquery   │      135000.0 │          123 │             4.8 │          0.65 │
+├────────────┴───────────────┴──────────────┴─────────────────┴───────────────┤
+│ 25 rows                                                           5 columns │
+└─────────────────────────────────────────────────────────────────────────────┘
+
 */
