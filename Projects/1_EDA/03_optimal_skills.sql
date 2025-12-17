@@ -1,8 +1,10 @@
 /*
-Question: What are the most optimal skills for data engineers—balancing both demand and salary using the natural log of demand?
-- Use the natural logarithm of demand count combined with median salary to calculate an "optimal score" for each skill.
-- Focus only on remote positions for Data Engineers with specified annual salaries.
-- Why? This approach highlights skills that provide a strategic balance of market demand and financial reward, weighting core skills appropriately instead of letting outlier (rare) skills distort the results. The natural log transformation ensures that both high-salary and widely-in-demand skills surface as the most practical and valuable to learn for data engineering careers.
+Question: What are the most optimal skills for data engineers—balancing both demand and salary?
+- Create a ranking column that combines demand count and median salary to identify the most valuable skills.
+- Focus only on remote Data Engineer positions with specified annual salaries.
+- Why?
+    - This approach highlights skills that balance market demand and financial reward. It weights core skills appropriately instead of letting rare, outlier skills distort the results.
+    - The natural log transformation ensures that both high-salary and widely in-demand skills surface as the most practical and valuable to learn for data engineering careers.
 */
 
 SELECT 
@@ -10,7 +12,7 @@ SELECT
     ROUND(MEDIAN(jpf.salary_year_avg), 1) AS median_salary,
     COUNT(sjd.job_id) AS demand_count,
     ROUND(LN(COUNT(sjd.job_id)), 1) AS ln_demand_count,
-    ROUND((ln_demand_count * median_salary)/1_000_000, 2) AS optimal_score
+    ROUND((LN(COUNT(sjd.job_id)) * MEDIAN(jpf.salary_year_avg))/1_000_000, 2) AS optimal_score
 FROM job_postings_fact jpf
 INNER JOIN skills_job_dim sjd ON jpf.job_id = sjd.job_id
 INNER JOIN skills_dim sd ON sjd.skill_id = sd.skill_id
