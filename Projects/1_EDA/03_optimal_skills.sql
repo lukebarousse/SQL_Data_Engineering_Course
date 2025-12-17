@@ -10,9 +10,9 @@ Question: What are the most optimal skills for data engineers—balancing both d
 SELECT 
     sd.skills,
     ROUND(MEDIAN(jpf.salary_year_avg), 1) AS median_salary,
-    COUNT(sjd.job_id) AS demand_count,
-    ROUND(LN(COUNT(sjd.job_id)), 1) AS ln_demand_count,
-    ROUND((LN(COUNT(sjd.job_id)) * MEDIAN(jpf.salary_year_avg))/1_000_000, 2) AS optimal_score
+    COUNT(jpf.*) AS demand_count,
+    ROUND(LN(COUNT(jpf.*)), 1) AS ln_demand_count,
+    ROUND((LN(COUNT(jpf.*)) * MEDIAN(jpf.salary_year_avg))/1_000_000, 2) AS optimal_score
 FROM job_postings_fact jpf
 INNER JOIN skills_job_dim sjd ON jpf.job_id = sjd.job_id
 INNER JOIN skills_dim sd ON sjd.skill_id = sd.skill_id
