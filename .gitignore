@@ -1,5 +1,6 @@
 # 🗄️ Local databases
 *.duckdb
+*.duckdb.wal
 *.sqlite
 *.db
 

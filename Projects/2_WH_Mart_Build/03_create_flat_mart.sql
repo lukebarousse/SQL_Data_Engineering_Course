@@ -30,8 +30,11 @@ CREATE TABLE flat_mart.job_postings (
     -- Company dimension fields
     company_id INTEGER,
     company_name VARCHAR,
-    -- Aggregate skills into a comma-separated list
-    skills_list VARCHAR
+    -- Aggregate skills into a array of structs with type and name
+    skills_and_types STRUCT(
+        type VARCHAR,
+        name VARCHAR
+    )[]
 );
 
 INSERT INTO flat_mart.job_postings (
@@ -52,7 +55,7 @@ INSERT INTO flat_mart.job_postings (
     salary_hour_avg,
     company_id,
     company_name,
-    skills_list
+    skills_and_types
 )
 SELECT
     -- Fact table fields
@@ -74,8 +77,13 @@ SELECT
     -- Company dimension fields
     cd.company_id,
     cd.name AS company_name,
-    -- Aggregate skills into a comma-separated list
-    STRING_AGG(sd.skills, ', ') AS skills_list   
+    -- Aggregate skills into an array of structs
+    ARRAY_AGG(
+      STRUCT_PACK(
+        type := sd.type,
+        name := sd.skills
+      )
+    ) AS skills_and_types
 FROM
     job_postings_fact jpf
     LEFT JOIN company_dim cd ON jpf.company_id = cd.company_id
@@ -96,6 +104,6 @@ SELECT
     job_country,
     salary_year_avg,
     job_work_from_home,
-    skills_list
+    skills_and_types
 FROM flat_mart.job_postings 
 LIMIT 10;

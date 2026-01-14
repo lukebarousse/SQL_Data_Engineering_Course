@@ -1,5 +1,5 @@
--- Step 5: Mart - Create company prospecting mart (dimensional mart)
--- Run this after Step 4
+-- Step 7 (BONUS): Mart - Create company prospecting mart (dimensional mart)
+-- Run this after Step 6 (Priority Mart)
 
 -- Drop existing mart schema if it exists (for idempotency)
 DROP SCHEMA IF EXISTS company_mart CASCADE;

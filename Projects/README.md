@@ -1,6 +1,8 @@
 # Data Engineering Projects
 
-Two complementary projects demonstrating SQL analytics and data engineering pipeline development.
+The following projects are a collection of SQL projects that I have worked on to practice and reinforce my skills in SQL.
+
+> Click the project name below to view the project details and code.
 
 # Projects
 

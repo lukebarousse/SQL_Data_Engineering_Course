@@ -28,8 +28,18 @@
 -- Step 4: Mart - Create skills demand mart
 .read 04_create_skills_mart.sql
 
--- Step 5: Mart - Create company prospecting mart
-.read 05_create_company_mart.sql
+-- Step 5: Mart - Create priority mart
+.read 05_create_priority_mart.sql
+
+-- Step 6: Mart - Update priority mart
+.read 06_update_priority_mart.sql
+
+-- Step 7: Mart - Create company prospecting mart
+.read 07_create_company_mart.sql
+
+-- Commit transaction - all changes become permanent
+-- If any errors occurred, use ROLLBACK instead to undo all changes
+COMMIT;
 
 -- Final verification
 SELECT '=== Pipeline Build Complete ===' AS status;
