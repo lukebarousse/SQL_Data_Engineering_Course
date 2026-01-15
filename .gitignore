@@ -26,7 +26,6 @@ tmp/
 *.log
 
 # ⚙️ Tooling (dbt, VS Code, venvs, etc.)
-
 target/
 .idea/
 .vscode/
