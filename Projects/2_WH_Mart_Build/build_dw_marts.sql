@@ -37,10 +37,6 @@
 -- Step 7: Mart - Create company prospecting mart
 .read 07_create_company_mart.sql
 
--- Commit transaction - all changes become permanent
--- If any errors occurred, use ROLLBACK instead to undo all changes
-COMMIT;
-
 -- Final verification
 SELECT '=== Pipeline Build Complete ===' AS status;
 SELECT 'All warehouse tables and marts created successfully' AS message;
