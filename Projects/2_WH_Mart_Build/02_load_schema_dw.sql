@@ -2,10 +2,6 @@
 -- Run this after Step 1
 -- Note: Update the GCS bucket path with your actual bucket name
 
--- Install and load httpfs extension to read from HTTP/HTTPS URLs (Google Cloud Storage)
-INSTALL httpfs;
-LOAD httpfs;
-
 -- Load dimension tables first (no FK dependencies)
 INSERT INTO company_dim (company_id, name, link, link_google, thumbnail)
 SELECT company_id, name, link, link_google, thumbnail

@@ -65,7 +65,7 @@ CREATE TABLE skills_mart.fact_skill_demand_monthly (
     postings_count INTEGER,
     remote_postings_count INTEGER,
     health_insurance_postings_count INTEGER,
-    no_degree_postings_count INTEGER,
+    no_degree_mention_count INTEGER,
     PRIMARY KEY (skill_id, month_start_date, job_title_short),
     FOREIGN KEY (skill_id) REFERENCES skills_mart.dim_skill(skill_id),
     FOREIGN KEY (month_start_date) REFERENCES skills_mart.dim_date_month(month_start_date)
@@ -78,7 +78,7 @@ INSERT INTO skills_mart.fact_skill_demand_monthly (
     postings_count,
     remote_postings_count,
     health_insurance_postings_count,
-    no_degree_postings_count
+    no_degree_mention_count
 )
 WITH job_postings_prepared AS (
     SELECT
@@ -88,7 +88,7 @@ WITH job_postings_prepared AS (
         -- Convert boolean flags to numeric values (1 or 0)
         CASE WHEN jp.job_work_from_home = TRUE THEN 1 ELSE 0 END AS is_remote,
         CASE WHEN jp.job_health_insurance = TRUE THEN 1 ELSE 0 END AS has_health_insurance,
-        CASE WHEN jp.job_no_degree_mention = TRUE THEN 1 ELSE 0 END AS no_degree_required
+        CASE WHEN jp.job_no_degree_mention = TRUE THEN 1 ELSE 0 END AS no_degree_mention
     FROM
         job_postings_fact jp
     INNER JOIN
@@ -108,8 +108,7 @@ SELECT
     -- Remote / benefits / degree flags (additive counts)
     SUM(is_remote) AS remote_postings_count,
     SUM(has_health_insurance) AS health_insurance_postings_count,
-    SUM(no_degree_required) AS no_degree_postings_count
-
+    SUM(no_degree_mention) AS no_degree_mention_count
 FROM
     job_postings_prepared
 GROUP BY
@@ -141,7 +140,7 @@ SELECT
     fdsm.postings_count,
     fdsm.remote_postings_count,
     fdsm.health_insurance_postings_count,
-    fdsm.no_degree_postings_count,
+    fdsm.no_degree_mention_count,
     -- Calculate derived metrics (ratios) from additive measures
     CASE 
         WHEN fdsm.postings_count > 0 

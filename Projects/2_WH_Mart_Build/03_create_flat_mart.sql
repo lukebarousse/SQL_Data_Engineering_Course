@@ -85,10 +85,10 @@ SELECT
       )
     ) AS skills_and_types
 FROM
-    job_postings_fact jpf
-    LEFT JOIN company_dim cd ON jpf.company_id = cd.company_id
-    LEFT JOIN skills_job_dim sjd ON jpf.job_id = sjd.job_id
-    LEFT JOIN skills_dim sd ON sjd.skill_id = sd.skill_id
+    job_postings_fact AS jpf
+    LEFT JOIN company_dim AS cd ON jpf.company_id = cd.company_id
+    LEFT JOIN skills_job_dim AS sjd ON jpf.job_id = sjd.job_id
+    LEFT JOIN skills_dim AS sd ON sjd.skill_id = sd.skill_id
 GROUP BY ALL;
 
 -- Verify flat mart was created
