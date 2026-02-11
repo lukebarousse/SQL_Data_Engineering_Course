@@ -1,86 +1,126 @@
-# Data Warehouse Star Schema Project
+# 🏭 Flat to Warehouse Build: Star Schema Transformation
 
-A comprehensive SQL data engineering project that transforms flat job posting data into a normalized star schema using DuckDB.
+An ETL pipeline that transforms flat job posting data (single CSV with embedded skill lists) into a normalized star schema using DuckDB—demonstrating **data transformation, dimensional modeling, and production-ready ETL practices**.
 
-## Overview
+*Bonus project — not covered in the course video*
 
-This project demonstrates advanced SQL skills including:
-- **DML/DDL Operations**: Table creation, data manipulation, and schema design
-- **Data Transformation**: Converting Python list strings to normalized relational data
-- **Star Schema Design**: Implementing fact and dimension tables with proper relationships
-- **ETL Pipeline**: Automated data loading from Google Cloud Storage
-- **Bridge Tables**: Many-to-many relationship handling for skills-to-jobs mapping
+![Data Warehouse Schema](../../Resources/images/1_2_Data_Warehouse.png)
 
-## Schema Design
+---
 
-### Fact Table
-- `job_postings_fact`: Central fact table with job metrics and foreign keys
+## 🧾 Executive Summary (For Hiring Managers)
 
-### Dimension Tables
-- `company_dim`: Company lookup table with unique company IDs
-- `skills_dim`: Skills catalog with standardized skill names
+- ✅ **Project scope:** Built an **ETL pipeline** that transforms a flat CSV into a star schema warehouse
+- ✅ **Data modeling:** Designed **fact table, dimensions, and bridge table** to normalize many-to-many job–skill relationships
+- ✅ **Data transformation:** Implemented **string parsing** to convert Python list format `['skill1', 'skill2']` into normalized relational rows
+- ✅ **ETL development:** Automated **extract, transform, load** with idempotent scripts and verification queries
 
-### Bridge Table
-- `skills_job_dim`: Many-to-many relationship between jobs and skills
+If you only have a minute, review these:
 
-## Data Source
-- **Source**: Google Cloud Storage CSV file
-- **URL**: `https://storage.googleapis.com/sql_de/job_postings_flat.csv`
-- **Records**: Job postings with salary, location, skills, and company data
+1. [`01_create_tables.sql`](./01_create_tables.sql) – Star schema DDL
+2. [`02_populate_company_dim.sql`](./02_populate_company_dim.sql) – Company dimension with deduplication
+3. [`03_populate_skills_dim.sql`](./03_populate_skills_dim.sql) – Skills dimension from parsed lists
+4. [`04_populate_fact_table.sql`](./04_populate_fact_table.sql) – Fact table population
+5. [`05_populate_bridge_table.sql`](./05_populate_bridge_table.sql) – Many-to-many job–skill bridge
 
-## Key SQL Techniques Demonstrated
+---
 
-- **Complex String Parsing**: Converting Python list format `['skill1', 'skill2']` to normalized rows
-- **Window Functions**: `ROW_NUMBER()` for generating surrogate keys
-- **CTEs**: Common Table Expressions for complex data transformations
-- **Foreign Key Constraints**: Maintaining referential integrity
-- **UNNEST Operations**: Flattening array-like data structures
-- **Data Type Casting**: Handling DuckDB-specific data types
+## 🧩 Problem & Context
 
-## Quick Start
+Job posting data often arrives as a **flat CSV** with skills stored as a Python-style list string (e.g., `['SQL', 'Python', 'AWS']`)—not suitable for analytical queries or dimensional modeling.
 
-### Option 1: Master Script (Recommended)
+**Challenge:** Analysts need to join on skills, aggregate by skill demand, and analyze salary by skill. A flat table with embedded lists prevents efficient querying and violates normalization principles.
+
+**Solution:** ETL pipeline that loads the flat CSV, parses skill lists into normalized rows, and builds a star schema with `job_postings_fact`, `company_dim`, `skills_dim`, and `skills_job_dim` (bridge table). The result mirrors the warehouse structure used in Projects 1 and 2.
+
+---
+
+## 🧰 Tech Stack
+
+- 🐤 **Database:** DuckDB (file-based OLAP with GCS integration via `httpfs`)
+- 🧮 **Language:** SQL (DDL for schema, DML for transformation and loading)
+- 📊 **Data Model:** Star schema (fact + dimensions + bridge table)
+- 🛠️ **Development:** VS Code for SQL editing + Terminal for DuckDB CLI
+- 🔧 **Automation:** Master script `build_warehouse.sql` for full pipeline execution
+- 📦 **Version Control:** Git/GitHub for versioned scripts
+- ☁️ **Storage:** Google Cloud Storage (`job_postings_flat.csv`)
+
+---
+
+## 📂 Repository Structure
+
+```text
+3_Flat_to_WH_Build/
+├── 00_load_data.sql            # Data import from Google Cloud
+├── 01_create_tables.sql        # Star schema table creation
+├── 02_populate_company_dim.sql # Company dimension population
+├── 03_populate_skills_dim.sql  # Skills dimension (parsed from lists)
+├── 04_populate_fact_table.sql  # Fact table population
+├── 05_populate_bridge_table.sql# Bridge table (job–skill many-to-many)
+├── 06_verify_schema.sql        # Schema verification queries
+├── build_warehouse.sql         # Master build script
+├── build_warehouse.sh          # Shell script with error handling
+└── README.md                   # You are here
+```
+
+---
+
+## 🏗️ Pipeline Overview
+
+### Data Source
+
+- **URL:** `https://storage.googleapis.com/sql_de/job_postings_flat.csv`
+- **Format:** Flat CSV with job details, company info, and skills as Python list strings
+
+### Star Schema Output
+
+![Data Warehouse Schema](../../Resources/images/1_2_Data_Warehouse.png)
+
+- **Fact Table:** `job_postings_fact` – Central table with job metrics and foreign keys
+- **Dimension Tables:** `company_dim`, `skills_dim` – Lookup tables with surrogate keys
+- **Bridge Table:** `skills_job_dim` – Many-to-many relationship between jobs and skills
+
+### Quick Start
+
+**Option 1: Master script**
 ```bash
 duckdb -c ".read build_warehouse.sql"
 ```
 
-### Option 2: Shell Script with Error Handling
+**Option 2: Shell script**
 ```bash
 chmod +x build_warehouse.sh
 ./build_warehouse.sh
 ```
 
-## File Structure
-```
-├── 00_load_data.sql          # Data import from Google Cloud
-├── 01_create_tables.sql      # Star schema table creation
-├── 02_populate_company_dim.sql # Company dimension population
-├── 03_populate_skills_dim.sql  # Skills dimension population
-├── 04_populate_fact_table.sql # Fact table population
-├── 05_populate_bridge_table.sql # Bridge table population
-├── 06_verify_schema.sql       # Schema verification queries
-├── build_warehouse.sql          # Production build script
-└── build_warehouse.sh        # Production shell script
-```
+---
 
-## Verification
+## 💻 Data Engineering Skills Demonstrated
 
-After execution, verify the star schema with:
-```sql
--- Check record counts across all tables
-SELECT 'job_postings_fact' as table_name, COUNT(*) as records FROM job_postings_fact
-UNION ALL
-SELECT 'company_dim', COUNT(*) FROM company_dim
-UNION ALL  
-SELECT 'skills_dim', COUNT(*) FROM skills_dim
-UNION ALL
-SELECT 'skills_job_dim', COUNT(*) FROM skills_job_dim;
-```
+### Data Transformation
 
-## Skills Showcased
+- **String Parsing:** Converting Python list format `['skill1', 'skill2']` to normalized rows via `UNNEST` and string functions
+- **Type Casting:** DuckDB data types (`VARCHAR`, `INTEGER`, `DOUBLE`, etc.) for schema integrity
+- **Deduplication:** Extracting unique companies and skills with proper surrogate key generation
 
-- **Data Modeling**: Star schema design principles
-- **SQL Optimization**: Efficient queries and indexing strategies  
-- **ETL Development**: Extract, Transform, Load pipeline creation
-- **Data Quality**: Referential integrity and data validation
-- **Production Practices**: Error handling and automation
+### Dimensional Modeling
+
+- **Star Schema Design:** Fact table with dimension and bridge tables
+- **Surrogate Keys:** `ROW_NUMBER()` for generating sequential IDs
+- **Bridge Table:** Many-to-many relationship handling for job–skill mappings
+- **Referential Integrity:** Foreign key constraints between fact, dimensions, and bridge
+
+### SQL Techniques
+
+- **DDL:** `CREATE TABLE`, `DROP TABLE IF EXISTS` for idempotent schema creation
+- **DML:** `INSERT INTO ... SELECT` with explicit column mapping
+- **CTEs:** Common Table Expressions for complex transformations
+- **Window Functions:** `ROW_NUMBER()` for surrogate key generation
+- **UNNEST:** Flattening array-like skill data into relational rows
+
+### Production Practices
+
+- **Idempotency:** Scripts safely rerunnable without side effects
+- **Verification:** `06_verify_schema.sql` for record count validation
+- **Orchestration:** Master script for automated end-to-end execution
+- **Error Handling:** Shell script with structured execution flow

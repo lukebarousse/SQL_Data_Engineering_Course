@@ -1,8 +1,6 @@
 # Data Engineering Projects
 
-The following projects are a collection of SQL projects that I have worked on to practice and reinforce my skills in SQL.
-
-> Click the project name below to view the project details and code.
+Hands-on projects to reinforce core data engineering concepts from the SQL for Data Engineering course.
 
 # Projects
 
@@ -17,3 +15,11 @@ SQL-driven analysis of data engineer job market trends using advanced querying t
 End-to-end ETL pipeline transforming raw CSV files into a star schema data warehouse and analytical data marts.
 
 **Skills**: Dimensional modeling, ETL pipeline development, data mart architecture, production practices
+
+## [3_Flat_to_WH_Build/](./3_Flat_to_WH_Build/) - Flat to Warehouse Build
+
+*Bonus project — not covered in the course video*
+
+SQL-driven transformation of flat job posting data into a normalized star schema using DuckDB.
+
+**Skills**: Data transformation, star schema design, ETL pipeline development, production practices
